@@ -17,7 +17,7 @@ defmodule GaveldWeb.Router do
   scope "/", GaveldWeb do
     pipe_through :browser
 
-    live "/", PageLive, :index
+    live "/", HomepageLive, :index
   end
 
   #coveralls-ignore-start
