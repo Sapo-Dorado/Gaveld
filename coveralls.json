@@ -1,0 +1,7 @@
+{
+    "skip_files": [
+        "test",
+        "lib/gaveld_web.ex",
+        "lib/gaveld/application.ex"
+    ]
+}

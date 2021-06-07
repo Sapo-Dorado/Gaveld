@@ -10,15 +10,17 @@ defmodule GaveldWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
-  end
+  #pipeline :api do
+  #  plug :accepts, ["json"]
+  #end
 
   scope "/", GaveldWeb do
     pipe_through :browser
 
     live "/", PageLive, :index
   end
+
+  #coveralls-ignore-start
 
   # Other scopes may use custom stacks.
   # scope "/api", GaveldWeb do
@@ -40,4 +42,5 @@ defmodule GaveldWeb.Router do
       live_dashboard "/dashboard", metrics: GaveldWeb.Telemetry
     end
   end
+  #coveralls-ignore-stop
 end
