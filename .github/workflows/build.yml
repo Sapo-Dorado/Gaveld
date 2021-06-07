@@ -1,0 +1,46 @@
+# Based on information from https://www.richardtaylor.dev/articles/elixir-phoenix-release-workflow-github-ci
+name: build 
+
+on: push
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    name: OTP ${{ matrix.otp }} | Elixir ${{ matrix.elixir }} | Node ${{ matrix.node }} | OS ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        otp: [22.x]
+        elixir: [1.9.x]
+        node: [12.x]
+
+    services:
+      db:
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DATABASE: lutis_test
+        image: postgres:11
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v1.0.0
+      - uses: actions/setup-elixir@v1.0.0
+        with:
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install dependencies
+        run: mix deps.get
+      - run: mix compile 
+      - run: mix ecto.setup
+      - run: npm install
+      - run: MIX_ENV=test mix coveralls.json --trace
+      - name: Upload to Codecov
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: bash <(curl -s https://codecov.io/bash)
