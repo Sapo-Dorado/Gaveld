@@ -3,6 +3,7 @@ defmodule Gaveld.Games do
   alias Gaveld.Repo
 
   alias Gaveld.Games.Game
+  alias Gaveld.Games.Player
   alias Gaveld.Codes
 
   def get_game(code) do
@@ -25,7 +26,19 @@ defmodule Gaveld.Games do
     end
   end
 
+  def add_player(%Game{} = game, name) do
+    %Player{}
+    |> Player.changeset(%{name: name, uid: compute_uid(game, name), game_id: game.id})
+    |> Repo.insert()
+  end
+
+  def compute_uid(%Game{} = game, name) do
+    name <> "/" <> to_string(game.id)
+  end
+
   def delete_game(%Game{} = game) do
     Repo.delete(game)
   end
+
+
 end

@@ -25,9 +25,3 @@ nouns
 |> Enum.map(&Codes.create_word/1)
 
 Gaveld.Games.create_game()
-Gaveld.Games.create_game()
-Gaveld.Games.create_game()
-Gaveld.Games.create_game()
-Gaveld.Games.create_game()
-Gaveld.Games.create_game()
-Gaveld.Games.create_game()
