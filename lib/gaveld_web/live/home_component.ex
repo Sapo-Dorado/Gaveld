@@ -1,4 +1,4 @@
-defmodule HomeComponent do
+defmodule GaveldWeb.HomeComponent do
   use GaveldWeb, :live_component
 
   @impl true
@@ -14,7 +14,7 @@ defmodule HomeComponent do
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
-            <a class="button is-dark">
+            <a class="button is-dark" phx-click="create_game">
               <strong>Create Game</strong>
             </a>
           </div>

@@ -1,20 +1,26 @@
-defmodule GameComponent do
+defmodule GaveldWeb.GameComponent do
   use GaveldWeb, :live_component
 
   alias Gaveld.Games
+  alias Phoenix.PubSub
 
   @impl true
   def update(%{code: code, id: id}, socket) do
+    pub_sub_sending = "display_#{String.replace(code, " ", "_")}"
+    pub_sub_receiving = "display_#{String.replace(code, " ", "_")}_player"
+    PubSub.subscribe(Gaveld.PubSub, pub_sub_receiving)
     case Games.get_game(code) do
       nil -> {:ok, assign(socket, game_view: "invalid", code: code, id: id)}
-      game -> {:ok, assign(socket, game_view: "valid", game: game, code: code, id: id, errors: nil)}
+      game -> {:ok, assign(socket, game_view: "valid", game: game, code: code, id: id, errors: nil, pub_sub_sending: pub_sub_sending)}
     end
   end
 
   @impl true
   def handle_event("enter_name", %{"name" => name}, socket) do
     case Games.add_player(socket.assigns.game, name) do
-      {:ok, player} -> {:noreply, assign(socket, player: player, game_view: "joined", errors: nil)}
+      {:ok, player} ->
+        PubSub.broadcast(Gaveld.PubSub, socket.assigns.pub_sub_sending, {:new_player, name})
+        {:noreply, assign(socket, player: player, game_view: "joined", errors: nil)}
       {:error, changeset} -> {:noreply, assign(socket, errors: changeset.errors)}
     end
   end
