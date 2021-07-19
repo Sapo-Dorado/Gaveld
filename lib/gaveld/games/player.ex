@@ -18,7 +18,7 @@ defmodule Gaveld.Games.Player do
     player
     |> cast(attrs, [:name, :uid, :game_id])
     |> validate_required([:name, :uid, :game_id])
-    |> validate_length(:name, min: 3)
-    |> unique_constraint(:uid)
+    |> validate_length(:name, min: 3, message: "must be at least 3 characters")
+    |> unique_constraint(:uid, message: "name already taken")
   end
 end

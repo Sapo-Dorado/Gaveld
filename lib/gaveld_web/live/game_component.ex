@@ -7,19 +7,15 @@ defmodule GameComponent do
   def update(%{code: code, id: id}, socket) do
     case Games.get_game(code) do
       nil -> {:ok, assign(socket, game_view: "invalid", code: code, id: id)}
-      game -> {:ok, assign(socket, game_view: "valid", game: game, code: code, id: id, error: false)}
+      game -> {:ok, assign(socket, game_view: "valid", game: game, code: code, id: id, errors: nil)}
     end
   end
 
   @impl true
   def handle_event("enter_name", %{"name" => name}, socket) do
     case Games.add_player(socket.assigns.game, name) do
-      {:ok, player} -> {:noreply, assign(socket, player: player, game_view: "joined")}
-      {:error, changeset} ->
-        case changeset.errors do
-          [name: _ ] -> {:noreply, assign(socket, error: true, error_message: "Must be at least 3 characters!")}
-          [uid: _ ] -> {:noreply, assign(socket, error: true, error_message: "Name already taken!")}
-        end
+      {:ok, player} -> {:noreply, assign(socket, player: player, game_view: "joined", errors: nil)}
+      {:error, changeset} -> {:noreply, assign(socket, errors: changeset.errors)}
     end
   end
 
@@ -59,6 +55,7 @@ defmodule GameComponent do
                 <div class="column"></div>
                 <div class="column is-one-third">
                   <input type="text" name="name" placeholder="Enter Name" class="input is-success has-text-centered"/>
+                  <%= print_errors(@errors) %>
                 </div>
                 <div class="column">
                   <button type="submit" class="button is-success">Enter</button>
@@ -66,15 +63,19 @@ defmodule GameComponent do
                 <div class="column"></div>
                 </div>
             </form>
-            <%= if @error do %>
-              <p><%= @error_message %></p>
-            <%end%>
           </div>
         </div>
         <div class="column"></div>
       </div>
     </section>
     '''
+  end
+
+  def print_errors(errors) do
+    if not is_nil(errors) do
+      Enum.map(errors, fn {_,error} -> content_tag(:span, translate_error(error)) end)
+      |> IO.inspect
+    end
   end
 
   def render_joined(assigns) do
