@@ -23,5 +23,3 @@ nouns
 |> String.split("\n", trim: true)
 |> Enum.map(fn word -> %{word: word, type: "noun"} end)
 |> Enum.map(&Codes.create_word/1)
-
-Gaveld.Games.create_game()

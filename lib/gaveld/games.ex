@@ -40,5 +40,11 @@ defmodule Gaveld.Games do
     Repo.delete(game)
   end
 
+  def display_receiving_channel(code) do
+    "display_#{String.replace(code, " ", "_")}"
+  end
 
+  def display_sending_channel(code) do
+    display_receiving_channel(code) <> "_player"
+  end
 end

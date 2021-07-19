@@ -9,16 +9,13 @@ defmodule GaveldWeb.DisplayLive do
     case Games.get_game(code) do
       nil -> {:ok, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
       game ->
-        pub_sub_sending = "display_#{String.replace(code, " ", "_")}_player"
-        pub_sub_receiving = "display_#{String.replace(code, " ", "_")}"
-        if connected?(socket), do: PubSub.subscribe(Gaveld.PubSub, pub_sub_receiving)
-        {:ok, assign(socket, players: [], game: game, pub_sub_sending: pub_sub_sending)}
+        if connected?(socket), do: PubSub.subscribe(Gaveld.PubSub, Games.display_receiving_channel(code))
+        {:ok, assign(socket, players: [], game: game)}
     end
   end
 
   @impl true
   def handle_info({:new_player, name}, socket) do
-    IO.inspect("hi")
     {:noreply, assign(socket, players: socket.assigns.players ++ [name])}
   end
 
