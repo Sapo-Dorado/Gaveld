@@ -10,7 +10,8 @@ defmodule GaveldWeb.DisplayLive do
       nil -> {:ok, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
       game ->
         if connected?(socket), do: PubSub.subscribe(Gaveld.PubSub, Games.display_receiving_channel(code))
-        {:ok, assign(socket, players: [], game: game)}
+        game = Games.reload_players(game)
+        {:ok, assign(socket, players: Enum.map(game.players, fn p -> p.name end), game: game)}
     end
   end
 

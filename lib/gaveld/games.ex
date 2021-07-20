@@ -13,6 +13,10 @@ defmodule Gaveld.Games do
     Repo.one(query)
   end
 
+  def reload_players(game) do
+    Repo.preload(game, :players, force: true)
+  end
+
   def create_game() do
     game_changeset = Game.changeset(%Game{}, %{code: Codes.gen_code()})
     case Repo.insert(game_changeset) do
@@ -28,8 +32,17 @@ defmodule Gaveld.Games do
 
   def add_player(%Game{} = game, name) do
     %Player{}
-    |> Player.changeset(%{name: name, uid: compute_uid(game, name), game_id: game.id})
+    |> Player.changeset(%{name: name, uid: compute_uid(game, name), uuid: Ecto.UUID.generate(), game_id: game.id})
     |> Repo.insert()
+  end
+
+  def verify_player(game, name, uuid) do
+    uid = compute_uid(game, name)
+    query =
+      from p in Player,
+      where: p.uid == ^uid and p.uuid == ^uuid
+
+      Repo.one(query)
   end
 
   def compute_uid(%Game{} = game, name) do

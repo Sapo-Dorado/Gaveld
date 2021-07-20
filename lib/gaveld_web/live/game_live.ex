@@ -5,8 +5,22 @@ defmodule GaveldWeb.GameLive do
   alias Phoenix.PubSub
 
   @impl true
+  def mount(%{"code" => code, "name" => name, "uuid" => uuid}, _session, socket) do
+    case Games.get_game(code) do
+      nil -> {:ok, assign(socket, game_view: "invalid", code: code)}
+      game ->
+        case Games.verify_player(game, name, uuid) do
+          nil -> {:ok, push_redirect(socket, to: Routes.game_path(socket, :index, code: code))}
+          player ->
+            if connected?(socket), do: PubSub.subscribe(Gaveld.PubSub, Games.display_sending_channel(code))
+            {:ok, assign(socket, game_view: "joined", game: game, code: code, player: player)}
+        end
+    end
+
+  end
+
+  @impl true
   def mount(%{"code" => code}, _session, socket) do
-    if connected?(socket), do: PubSub.subscribe(Gaveld.PubSub, Games.display_sending_channel(code))
     case Games.get_game(code) do
       nil -> {:ok, assign(socket, game_view: "invalid", code: code)}
       game -> {:ok, assign(socket, game_view: "valid", game: game, code: code, errors: nil)}
@@ -23,7 +37,7 @@ defmodule GaveldWeb.GameLive do
     case Games.add_player(socket.assigns.game, name) do
       {:ok, player} ->
         PubSub.broadcast(Gaveld.PubSub, Games.display_receiving_channel(socket.assigns.code), {:new_player, name})
-        {:noreply, assign(socket, player: player, game_view: "joined", errors: nil)}
+        {:noreply, push_redirect(socket, to: Routes.game_path(socket, :index, code: socket.assigns.game.code, name: name, uuid: player.uuid))}
       {:error, changeset} -> {:noreply, assign(socket, errors: changeset.errors)}
     end
   end
@@ -83,7 +97,6 @@ defmodule GaveldWeb.GameLive do
   def print_errors(errors) do
     if not is_nil(errors) do
       Enum.map(errors, fn {_,error} -> content_tag(:span, translate_error(error)) end)
-      |> IO.inspect
     end
   end
 

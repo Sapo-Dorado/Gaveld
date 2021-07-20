@@ -6,6 +6,7 @@ defmodule Gaveld.Repo.Migrations.CreatePlayers do
       add :name, :string
       add :uid, :string
       add :points, :integer, default: 0
+      add :uuid, :string
       add :game_id, references(:games, on_delete: :delete_all), null: false
 
       timestamps()

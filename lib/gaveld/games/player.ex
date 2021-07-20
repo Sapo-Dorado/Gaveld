@@ -8,6 +8,7 @@ defmodule Gaveld.Games.Player do
     field :name, :string
     field :points, :integer
     field :uid, :string
+    field :uuid, :string
     belongs_to :game, Game
 
     timestamps()
@@ -16,8 +17,8 @@ defmodule Gaveld.Games.Player do
   @doc false
   def changeset(player, attrs) do
     player
-    |> cast(attrs, [:name, :uid, :game_id])
-    |> validate_required([:name, :uid, :game_id])
+    |> cast(attrs, [:name, :uid, :uuid, :game_id])
+    |> validate_required([:name, :uid, :uuid, :game_id])
     |> validate_length(:name, min: 3, message: "must be at least 3 characters")
     |> unique_constraint(:uid, message: "name already taken")
   end
