@@ -13,12 +13,19 @@ defmodule Gaveld.Games do
     Repo.one(query)
   end
 
+  def validate_game(code, uuid) do
+    case get_game(code) do
+      %Game{uuid: ^uuid} = game -> game
+      _ -> nil
+    end
+  end
+
   def reload_players(game) do
     Repo.preload(game, :players, force: true)
   end
 
   def create_game() do
-    game_changeset = Game.changeset(%Game{}, %{code: Codes.gen_code()})
+    game_changeset = Game.changeset(%Game{}, %{code: Codes.gen_code(), uuid: Ecto.UUID.generate()})
     case Repo.insert(game_changeset) do
       {:ok, game} -> game
       {:error, changeset} ->

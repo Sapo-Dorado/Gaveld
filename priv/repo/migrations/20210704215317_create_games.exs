@@ -4,6 +4,7 @@ defmodule Gaveld.Repo.Migrations.CreateGames do
   def change do
     create table(:games) do
       add :code, :string
+      add :uuid, :string
 
       timestamps()
     end

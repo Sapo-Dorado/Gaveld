@@ -11,7 +11,7 @@ defmodule GaveldWeb.HomepageLive do
   @impl true
   def handle_event("create_game", _, socket) do
     game = Games.create_game()
-    {:noreply, push_redirect(socket, to: Routes.display_path(socket, :index, code: game.code))}
+    {:noreply, push_redirect(socket, to: Routes.display_path(socket, :index, code: game.code, uuid: game.uuid))}
   end
 
   @impl true

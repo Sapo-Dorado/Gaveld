@@ -5,14 +5,18 @@ defmodule GaveldWeb.DisplayLive do
   alias Gaveld.Games
 
   @impl true
-  def mount(%{"code" => code}, _session, socket) do
-    case Games.get_game(code) do
+  def mount(%{"code" => code, "uuid" => uuid}, _session, socket) do
+    case Games.validate_game(code, uuid) do
       nil -> {:ok, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
       game ->
         if connected?(socket), do: PubSub.subscribe(Gaveld.PubSub, Games.display_receiving_channel(code))
         game = Games.reload_players(game)
         {:ok, assign(socket, players: Enum.map(game.players, fn p -> p.name end), game: game)}
     end
+  end
+
+  def mount(_params, _session, socket) do
+    {:ok, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
   end
 
   @impl true
