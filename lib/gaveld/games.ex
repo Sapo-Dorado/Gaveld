@@ -25,7 +25,7 @@ defmodule Gaveld.Games do
   end
 
   def create_game() do
-    game_changeset = Game.changeset(%Game{}, %{code: Codes.gen_code(), uuid: Ecto.UUID.generate()})
+    game_changeset = Game.changeset(%Game{}, %{code: Codes.gen_code(), uuid: Ecto.UUID.generate(), status: "initialized"})
     case Repo.insert(game_changeset) do
       {:ok, game} -> game
       {:error, changeset} ->
@@ -43,25 +43,51 @@ defmodule Gaveld.Games do
     |> Repo.insert()
   end
 
+  def start_game(%Game{} = game, name) do
+    game
+    |> Game.changeset(%{status: "voting", controller: name})
+    |> Repo.update()
+  end
+
+  def update_status(%Game{} = game, status) do
+    game
+    |> Game.changeset(%{status: status})
+    |> Repo.update()
+  end
+
   def verify_player(game, name, uuid) do
     uid = compute_uid(game, name)
     query =
       from p in Player,
       where: p.uid == ^uid and p.uuid == ^uuid
 
-      Repo.one(query)
+    Repo.one(query)
   end
 
   def compute_uid(%Game{} = game, name) do
     name <> "/" <> to_string(game.id)
   end
 
-  def delete_game(%Game{} = game) do
-    Repo.delete(game)
+  def delete_player(game, name) do
+    uid = compute_uid(game, name)
+    query =
+      from p in Player,
+      where: p.uid == ^uid
+    Repo.delete_all(query)
   end
 
+  def delete_game(code) do
+    query =
+      from g in Game,
+      where: g.code == ^code
+    Repo.delete_all(query)
+  end
   def display_receiving_channel(code) do
     "display_#{String.replace(code, " ", "_")}"
+  end
+
+  def player_receiving_channel(code, name) do
+    "player_#{String.replace(code, " ", "_")}_#{name}"
   end
 
   def display_sending_channel(code) do

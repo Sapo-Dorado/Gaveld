@@ -5,9 +5,22 @@ $info: #AFC1D6;
 $link: #CEF9F2;
 $success: #D6CA98;
 
-.zoom:hover {
-  transition: all .2s ease-in-out;
-  transform: scale(1.05);
+@import "../node_modules/bulma/bulma.sass";
+
+.player-button:hover {
+  color: $info;
+  text-decoration: line-through;
+  cursor: pointer;
 }
 
-@import "../node_modules/bulma/bulma.sass";
+.promote {
+  fill: $success;
+}
+
+.unselected {
+  opacity: 0.25;
+}
+
+.unselected:hover {
+  opacity: 0.75;
+}

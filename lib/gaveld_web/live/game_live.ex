@@ -2,18 +2,25 @@ defmodule GaveldWeb.GameLive do
   use GaveldWeb, :live_view
 
   alias Gaveld.Games
+  alias Gaveld.Games.Player
   alias Phoenix.PubSub
+
 
   @impl true
   def mount(%{"code" => code, "name" => name, "uuid" => uuid}, _session, socket) do
     case Games.get_game(code) do
-      nil -> {:ok, assign(socket, game_view: "invalid", code: code)}
+      nil -> {:ok, assign(socket, view: "invalid", code: code)}
       game ->
+        controller = game.controller
         case Games.verify_player(game, name, uuid) do
           nil -> {:ok, push_redirect(socket, to: Routes.game_path(socket, :index, code: code))}
+          %Player{name: ^controller} -> {:ok, push_redirect(socket, to: Routes.controller_path(socket, :index, code: code, name: name, uuid: uuid))}
           player ->
-            if connected?(socket), do: PubSub.subscribe(Gaveld.PubSub, Games.display_sending_channel(code))
-            {:ok, assign(socket, game_view: "joined", game: game, code: code, player: player)}
+            if connected?(socket) do
+              PubSub.subscribe(Gaveld.PubSub, Games.player_receiving_channel(code, name))
+              PubSub.subscribe(Gaveld.PubSub, Games.display_sending_channel(code))
+            end
+            {:ok, assign(socket, view: game.status, game: game, player: player, errors: nil)}
         end
     end
 
@@ -22,8 +29,8 @@ defmodule GaveldWeb.GameLive do
   @impl true
   def mount(%{"code" => code}, _session, socket) do
     case Games.get_game(code) do
-      nil -> {:ok, assign(socket, game_view: "invalid", code: code)}
-      game -> {:ok, assign(socket, game_view: "valid", game: game, code: code, errors: nil)}
+      nil -> {:ok, assign(socket, view: "invalid", code: code)}
+      game -> {:ok, assign(socket, view: "valid", game: game, errors: nil)}
     end
   end
 
@@ -36,22 +43,44 @@ defmodule GaveldWeb.GameLive do
   def handle_event("enter_name", %{"name" => name}, socket) do
     case Games.add_player(socket.assigns.game, name) do
       {:ok, player} ->
-        PubSub.broadcast(Gaveld.PubSub, Games.display_receiving_channel(socket.assigns.code), {:new_player, name})
+        PubSub.broadcast(Gaveld.PubSub, Games.display_receiving_channel(socket.assigns.game.code), {:new_player, name})
         {:noreply, push_redirect(socket, to: Routes.game_path(socket, :index, code: socket.assigns.game.code, name: name, uuid: player.uuid))}
       {:error, changeset} -> {:noreply, assign(socket, errors: changeset.errors)}
     end
   end
 
   @impl true
+  def handle_info(:delete, socket) do
+    {:noreply, push_redirect(socket, to: Routes.game_path(socket, :index, code: socket.assigns.game.code))}
+  end
+
+  @impl true
+  def handle_info(:kill_game, socket) do
+    {:noreply, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
+  end
+
+  @impl true
+  def handle_info(:voting, socket) do
+    {:noreply, assign(socket, view: "voting")}
+  end
+
+  @impl true
+  def handle_info(:become_controller, socket) do
+    {:noreply, push_redirect(socket, to: Routes.controller_path(socket, :index, code: socket.assigns.game.code, name: socket.assigns.player.name, uuid: socket.assigns.player.uuid))}
+  end
+
+  @impl true
   def render(assigns) do
     ~L'''
-    <%= cond do %>
-      <% @game_view == "invalid" -> %>
+    <%= case @view do %>
+      <% "invalid" -> %>
         <%= render_invalid(assigns) %>
-      <% @game_view == "valid" -> %>
+      <% "valid" -> %>
         <%= render_valid(assigns) %>
-      <% @game_view == "joined" -> %>
+      <% "initialized" -> %>
         <%= render_joined(assigns) %>
+      <% "voting" -> %>
+        <%= render_voting(assigns) %>
     <%end%>
     '''
   end
@@ -65,12 +94,12 @@ defmodule GaveldWeb.GameLive do
 
   def render_valid(assigns) do
     ~L'''
-    <h1 class="title">Joined Game <%= @code %>!</h1>
+    <h1 class="title">Joined Game <%= @game.code %>!</h1>
     <section class="section is-small">
       <div class="columns">
         <div class="column"></div>
         <div class="column is-three-fifths">
-          <div class="box has-text-centered has-background-link zoom">
+          <div class="box has-text-centered has-background-link">
             <p>Enter your name<p>
             <form phx-submit="enter_name">
               <div class="columns">
@@ -103,6 +132,12 @@ defmodule GaveldWeb.GameLive do
   def render_joined(assigns) do
     ~L'''
     <h1 class="title">Welcome <%= @player.name %>!</h1>
+    '''
+  end
+
+  def render_voting(assigns) do
+    ~L'''
+    <h1 class="title">Time to Vote!</h1>
     '''
   end
 end

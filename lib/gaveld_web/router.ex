@@ -20,6 +20,7 @@ defmodule GaveldWeb.Router do
     live "/", HomepageLive, :index
     live "/display", DisplayLive, :index
     live "/game", GameLive, :index
+    live "/controller", ControllerLive, :index
   end
 
   #coveralls-ignore-start

@@ -54,7 +54,7 @@ defmodule GaveldWeb.HomepageLive do
       <div class="columns">
         <div class="column"></div>
         <div class="column is-three-fifths">
-          <div class="box has-text-centered has-background-link zoom">
+          <div class="box has-text-centered has-background-link">
             <p>Join a game<p>
             <form phx-submit="join_game">
               <div class="columns">
