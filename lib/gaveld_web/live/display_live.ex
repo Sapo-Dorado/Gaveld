@@ -41,8 +41,7 @@ defmodule GaveldWeb.DisplayLive do
     case Games.start_game(socket.assigns.game, socket.assigns.controller) do
       {:ok, game} ->
         PubSub.broadcast(Gaveld.PubSub, Games.player_receiving_channel(socket.assigns.game.code, socket.assigns.controller), :become_controller)
-        start_voting(socket.assigns.game)
-        {:noreply, assign(socket, game: game, view: "voting")}
+        start_voting(socket, game)
       {:error, _} ->
         kill_game(socket.assigns.game.code)
         {:noreply, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
@@ -69,6 +68,30 @@ defmodule GaveldWeb.DisplayLive do
   end
 
   @impl true
+  def handle_info(:start_vote, socket) do
+    case Games.update_prev_game(socket.assigns.game, socket.assigns.game.status) do
+      {:ok, game} ->
+        start_voting(socket, game)
+      {:error, _} ->
+        kill_game(socket.assigns.game.code)
+        {:noreply, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
+    end
+  end
+
+  #This needs to be the last defined handle_info for this page
+  @impl true
+  def handle_info(game_name, socket) do
+    case Games.update_status(socket.assigns.game, game_name) do
+      {:ok, game} ->
+        PubSub.broadcast(Gaveld.PubSub, Games.display_sending_channel(socket.assigns.game.code), game_name)
+        {:noreply, assign(socket, game: game, view: game_name)}
+      {:error, _} ->
+        kill_game(socket.assigns.game.code)
+        {:noreply, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
+    end
+  end
+
+  @impl true
   def render(assigns) do
     ~L'''
     <%= case @view do %>
@@ -78,13 +101,22 @@ defmodule GaveldWeb.DisplayLive do
       <%= voting_screen(assigns) %>
     <% "voting_results" -> %>
       <%= voting_results_screen(assigns) %>
+    <% game_name ->%>
+      <%= game_name %>
     <%end%>
     '''
   end
 
-  def start_voting(game) do
-    PubSub.broadcast(Gaveld.PubSub, Games.display_sending_channel(game.code), :voting)
-    Games.clear_inputs(game)
+  def start_voting(socket, game) do
+    case Games.update_status(game, "voting") do
+      {:ok, game} ->
+        Games.clear_inputs(game)
+        PubSub.broadcast(Gaveld.PubSub, Games.display_sending_channel(game.code), :voting)
+        {:noreply, assign(socket, game: game, view: "voting", vote_count: 0)}
+      {:error, _} ->
+        kill_game(socket.assigns.game.code)
+        {:noreply, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
+    end
   end
 
   def end_vote(socket) do

@@ -45,7 +45,7 @@ defmodule Gaveld.Games do
 
   def start_game(%Game{} = game, name) do
     game
-    |> Game.changeset(%{status: "voting", controller: name})
+    |> Game.changeset(%{controller: name})
     |> Repo.update()
   end
 
@@ -57,6 +57,12 @@ defmodule Gaveld.Games do
   def update_status(%Game{} = game, status) do
     game
     |> Game.changeset(%{status: status})
+    |> Repo.update()
+  end
+
+  def update_prev_game(%Game{} = game, prev) do
+    game
+    |> Game.changeset(%{prev_game: prev})
     |> Repo.update()
   end
 

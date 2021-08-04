@@ -72,7 +72,12 @@ defmodule GaveldWeb.GameLive do
 
   @impl true
   def handle_info(:voting, socket) do
-    {:noreply, assign(socket, view: "voting")}
+    case Games.get_game(socket.assigns.game.code) do
+      nil ->
+        {:noreply, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
+      game ->
+        {:noreply, assign(socket, player: %{socket.assigns.player | input: nil}, game: game, view: "voting")}
+    end
   end
 
   @impl true
@@ -84,6 +89,13 @@ defmodule GaveldWeb.GameLive do
   def handle_info(:become_controller, socket) do
     {:noreply, push_redirect(socket, to: Routes.controller_path(socket, :index, code: socket.assigns.game.code, name: socket.assigns.player.name, uuid: socket.assigns.player.uuid))}
   end
+
+  #This needs to be the last defined handle_info on this page
+  @impl true
+  def handle_info(game_name , socket) do
+    {:noreply, assign(socket, view: game_name)}
+  end
+
 
   @impl true
   def render(assigns) do
@@ -99,6 +111,8 @@ defmodule GaveldWeb.GameLive do
         <%= render_voting(assigns) %>
       <% "voting_results" -> %>
         <%= render_voting_results(assigns) %>
+      <% game_name ->%>
+        <%= game_name %>
     <%end%>
     '''
   end
