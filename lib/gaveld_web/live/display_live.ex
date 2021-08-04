@@ -4,6 +4,8 @@ defmodule GaveldWeb.DisplayLive do
   alias Phoenix.PubSub
   alias Gaveld.Games
 
+  @games_list ["Game 1", "Game 2", "Game 3"]
+
   @impl true
   def mount(%{"code" => code, "uuid" => uuid}, _session, socket) do
     case Games.validate_game(code, uuid) do
@@ -39,8 +41,7 @@ defmodule GaveldWeb.DisplayLive do
     case Games.start_game(socket.assigns.game, socket.assigns.controller) do
       {:ok, game} ->
         PubSub.broadcast(Gaveld.PubSub, Games.player_receiving_channel(socket.assigns.game.code, socket.assigns.controller), :become_controller)
-        PubSub.broadcast(Gaveld.PubSub, Games.display_sending_channel(socket.assigns.game.code), :voting)
-        Games.clear_inputs(game)
+        start_voting(socket.assigns.game)
         {:noreply, assign(socket, game: game, view: "voting")}
       {:error, _} ->
         kill_game(socket.assigns.game.code)
@@ -79,6 +80,11 @@ defmodule GaveldWeb.DisplayLive do
       <%= voting_results_screen(assigns) %>
     <%end%>
     '''
+  end
+
+  def start_voting(game) do
+    PubSub.broadcast(Gaveld.PubSub, Games.display_sending_channel(game.code), :voting)
+    Games.clear_inputs(game)
   end
 
   def end_vote(socket) do
@@ -157,14 +163,12 @@ defmodule GaveldWeb.DisplayLive do
 
   def display_voting_results(assigns) do
     results = Games.voting_results(assigns.game)
-    categories =
-      results
-      |> Map.keys()
-      |> Enum.sort()
-      |> List.delete(nil)
+    games_list = @games_list
     ~L'''
-    <%= for topic <- categories do%>
-      <h1><%= topic %> - <%= results[topic] %></h1>
+    <%= for topic <- games_list do%>
+      <%= if not is_nil(results[topic]) do %>
+        <h1><%= topic %> - <%= results[topic] %></h1>
+      <%end%>
     <%end%>
     '''
   end

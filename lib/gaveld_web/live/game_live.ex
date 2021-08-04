@@ -5,7 +5,7 @@ defmodule GaveldWeb.GameLive do
   alias Gaveld.Games.Player
   alias Phoenix.PubSub
 
-
+  @games_list ["Game 1", "Game 2", "Game 3"]
   @impl true
   def mount(%{"code" => code, "name" => name, "uuid" => uuid}, _session, socket) do
     case Games.get_game(code) do
@@ -154,6 +154,7 @@ defmodule GaveldWeb.GameLive do
   end
 
   def render_voting(assigns) do
+    games_list = List.delete(@games_list, assigns.game.prev_game)
     ~L'''
     <h1 class="title">Time to Vote!</h1>
     <section class="section is-small">
@@ -167,12 +168,10 @@ defmodule GaveldWeb.GameLive do
               <p>Change your selection:</p>
             <%end%>
             <form phx-submit="submit">
-              <input type="radio" name="input" id="1" value="Game 1">
-              <label for="1">Game 1</label><br>
-              <input type="radio" name="input" id="2" value="Game 2">
-              <label for="2">Game 2</label><br>
-              <input type="radio" name="input" id="3" value="Game 3">
-              <label for="3">Game 3</label><br>
+              <%= for game <- games_list do %>
+                <input type="radio" name="input" id="<%= game %>" value="<%= game %>">
+                <label for="<%= game %>"><%= game %></label><br>
+              <%end%>
               <button type="submit" class="button is-success">Enter</button><br>
             </form>
             <%= if not is_nil(@player.input) do %>

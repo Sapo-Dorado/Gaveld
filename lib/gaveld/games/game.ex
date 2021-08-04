@@ -8,6 +8,7 @@ defmodule Gaveld.Games.Game do
     field :code, :string
     field :uuid, :string
     field :status, :string
+    field :prev_game, :string
     field :controller, :string
     has_many :players, Player
 
@@ -17,7 +18,7 @@ defmodule Gaveld.Games.Game do
   @doc false
   def changeset(game, attrs) do
     game
-    |> cast(attrs, [:code, :uuid, :status, :controller])
+    |> cast(attrs, [:code, :uuid, :status, :prev_game, :controller])
     |> validate_required([:code, :uuid, :status])
     |> unique_constraint(:code)
   end

@@ -6,6 +6,7 @@ defmodule Gaveld.Repo.Migrations.CreateGames do
       add :code, :string
       add :uuid, :string
       add :status, :string
+      add :prev_game, :string, default: nil
       add :controller, :string, default: nil
 
       timestamps()
