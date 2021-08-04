@@ -50,6 +50,17 @@ defmodule GaveldWeb.GameLive do
   end
 
   @impl true
+  def handle_event("submit", %{"input" => input}, socket) do
+    new_vote? = is_nil(socket.assigns.player.input)
+    case Games.add_input(socket.assigns.player, input) do
+      {:ok, player} ->
+        if new_vote?, do: PubSub.broadcast(Gaveld.PubSub, Games.display_receiving_channel(socket.assigns.game.code), :new_vote)
+        {:noreply, assign(socket, player: player)}
+      {:error, _ } -> {:noreply, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
+    end
+  end
+
+  @impl true
   def handle_info(:delete, socket) do
     {:noreply, push_redirect(socket, to: Routes.game_path(socket, :index, code: socket.assigns.game.code))}
   end
@@ -62,6 +73,11 @@ defmodule GaveldWeb.GameLive do
   @impl true
   def handle_info(:voting, socket) do
     {:noreply, assign(socket, view: "voting")}
+  end
+
+  @impl true
+  def handle_info(:stop_vote, socket) do
+    {:noreply, assign(socket, view: "voting_results")}
   end
 
   @impl true
@@ -81,6 +97,8 @@ defmodule GaveldWeb.GameLive do
         <%= render_joined(assigns) %>
       <% "voting" -> %>
         <%= render_voting(assigns) %>
+      <% "voting_results" -> %>
+        <%= render_voting_results(assigns) %>
     <%end%>
     '''
   end
@@ -138,6 +156,39 @@ defmodule GaveldWeb.GameLive do
   def render_voting(assigns) do
     ~L'''
     <h1 class="title">Time to Vote!</h1>
+    <section class="section is-small">
+      <div class="columns">
+        <div class="column"></div>
+        <div class="column is-three-fifths">
+          <div class="box has-text-centered has-background-link">
+            <%= if is_nil(@player.input) do%>
+              <p>Select an option:<p>
+            <%else%>
+              <p>Change your selection:</p>
+            <%end%>
+            <form phx-submit="submit">
+              <input type="radio" name="input" id="1" value="Game 1">
+              <label for="1">Game 1</label><br>
+              <input type="radio" name="input" id="2" value="Game 2">
+              <label for="2">Game 2</label><br>
+              <input type="radio" name="input" id="3" value="Game 3">
+              <label for="3">Game 3</label><br>
+              <button type="submit" class="button is-success">Enter</button><br>
+            </form>
+            <%= if not is_nil(@player.input) do %>
+              <p class="is-size-4">Your choice: <%=@player.input%></p>
+            <%end%>
+          </div>
+        </div>
+        <div class="column"></div>
+      </div>
+    </section>
+    '''
+  end
+
+  def render_voting_results(assigns) do
+    ~L'''
+    <h1 class="title">Voting Results</h1>
     '''
   end
 end

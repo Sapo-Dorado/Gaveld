@@ -49,6 +49,11 @@ defmodule Gaveld.Games do
     |> Repo.update()
   end
 
+  def voting_results(%Game{} = game) do
+    game.players
+    |> Enum.reduce(%{}, fn p, acc -> Map.update(acc, p.input, 1, &(&1 + 1)) end)
+  end
+
   def update_status(%Game{} = game, status) do
     game
     |> Game.changeset(%{status: status})
@@ -62,6 +67,20 @@ defmodule Gaveld.Games do
       where: p.uid == ^uid and p.uuid == ^uuid
 
     Repo.one(query)
+  end
+
+  def clear_inputs(game) do
+    game_id = game.id
+    query =
+      from p in Player,
+      where: p.game_id == ^game_id
+    Repo.update_all(query, set: [input: nil])
+  end
+
+  def add_input(player, input) do
+    player
+    |> Player.changeset(%{input: input})
+    |> Repo.update()
   end
 
   def compute_uid(%Game{} = game, name) do

@@ -11,7 +11,8 @@ defmodule GaveldWeb.DisplayLive do
       game ->
         if connected?(socket), do: PubSub.subscribe(Gaveld.PubSub, Games.display_receiving_channel(code))
         game = Games.reload_players(game)
-        {:ok, assign(socket, players: Enum.map(game.players, fn p -> p.name end), game: game, controller: nil, view: game.status)}
+        vote_count = Enum.reduce(game.players, 0, fn p, acc -> if is_nil(p.input), do: acc, else: acc + 1 end)
+        {:ok, assign(socket, players: Enum.map(game.players, fn p -> p.name end), game: game, controller: nil, view: game.status, vote_count: vote_count)}
     end
   end
 
@@ -39,7 +40,8 @@ defmodule GaveldWeb.DisplayLive do
       {:ok, game} ->
         PubSub.broadcast(Gaveld.PubSub, Games.player_receiving_channel(socket.assigns.game.code, socket.assigns.controller), :become_controller)
         PubSub.broadcast(Gaveld.PubSub, Games.display_sending_channel(socket.assigns.game.code), :voting)
-        {:noreply, assign(socket, game: game)}
+        Games.clear_inputs(game)
+        {:noreply, assign(socket, game: game, view: "voting")}
       {:error, _} ->
         kill_game(socket.assigns.game.code)
         {:noreply, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
@@ -52,6 +54,20 @@ defmodule GaveldWeb.DisplayLive do
   end
 
   @impl true
+  def handle_info(:new_vote, socket) do
+    if socket.assigns.vote_count == length(socket.assigns.players) - 2 do
+      end_vote(socket)
+    else
+      {:noreply, assign(socket, vote_count: socket.assigns.vote_count + 1)}
+    end
+  end
+
+  @impl true
+  def handle_info(:stop_vote, socket) do
+    end_vote(socket)
+  end
+
+  @impl true
   def render(assigns) do
     ~L'''
     <%= case @view do %>
@@ -59,8 +75,16 @@ defmodule GaveldWeb.DisplayLive do
       <%= join_screen(assigns) %>
     <% "voting" -> %>
       <%= voting_screen(assigns) %>
+    <% "voting_results" -> %>
+      <%= voting_results_screen(assigns) %>
     <%end%>
     '''
+  end
+
+  def end_vote(socket) do
+    Games.update_status(socket.assigns.game, "voting_results")
+    PubSub.broadcast(Gaveld.PubSub, Games.display_sending_channel(socket.assigns.game.code), :stop_vote)
+    {:noreply, assign(socket, game: Games.reload_players(socket.assigns.game), view: "voting_results")}
   end
 
   def join_screen(assigns) do
@@ -119,7 +143,29 @@ defmodule GaveldWeb.DisplayLive do
 
   def voting_screen(assigns) do
     ~L'''
-    <h1 class="title">Time to vote</div>
+    <h1 class="title">Time to Vote!</h1>
+    <h2 class="subtitle"><%= @vote_count %>/<%= length(@players) - 1 %> votes cast</h2>
+    '''
+  end
+
+  def voting_results_screen(assigns) do
+    ~L'''
+    <h1 class="title">Results:</h1>
+    <%= display_voting_results(assigns) %>
+    '''
+  end
+
+  def display_voting_results(assigns) do
+    results = Games.voting_results(assigns.game)
+    categories =
+      results
+      |> Map.keys()
+      |> Enum.sort()
+      |> List.delete(nil)
+    ~L'''
+    <%= for topic <- categories do%>
+      <h1><%= topic %> - <%= results[topic] %></h1>
+    <%end%>
     '''
   end
 
