@@ -71,13 +71,8 @@ defmodule GaveldWeb.GameLive do
   end
 
   @impl true
-  def handle_info(:voting, socket) do
-    case Games.get_game(socket.assigns.game.code) do
-      nil ->
-        {:noreply, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
-      game ->
-        {:noreply, assign(socket, player: %{socket.assigns.player | input: nil}, game: game, view: "voting")}
-    end
+  def handle_info({:voting, prev_game}, socket) do
+    {:noreply, assign(socket, player: %{socket.assigns.player | input: nil}, game: %{socket.assigns.game | prev_game: prev_game}, view: "voting")}
   end
 
   @impl true

@@ -55,16 +55,13 @@ defmodule Gaveld.Games do
   end
 
   def update_status(%Game{} = game, status) do
+    attrs = %{status: status}
+    attrs = if status == "voting", do: Map.put(attrs, :prev_game, game.status), else: attrs
     game
-    |> Game.changeset(%{status: status})
+    |> Game.changeset(attrs)
     |> Repo.update()
   end
 
-  def update_prev_game(%Game{} = game, prev) do
-    game
-    |> Game.changeset(%{prev_game: prev})
-    |> Repo.update()
-  end
 
   def verify_player(game, name, uuid) do
     uid = compute_uid(game, name)

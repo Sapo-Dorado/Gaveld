@@ -69,13 +69,7 @@ defmodule GaveldWeb.DisplayLive do
 
   @impl true
   def handle_info(:start_vote, socket) do
-    case Games.update_prev_game(socket.assigns.game, socket.assigns.game.status) do
-      {:ok, game} ->
-        start_voting(socket, game)
-      {:error, _} ->
-        kill_game(socket.assigns.game.code)
-        {:noreply, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
-    end
+    start_voting(socket, socket.assigns.game)
   end
 
   #This needs to be the last defined handle_info for this page
@@ -111,7 +105,7 @@ defmodule GaveldWeb.DisplayLive do
     case Games.update_status(game, "voting") do
       {:ok, game} ->
         Games.clear_inputs(game)
-        PubSub.broadcast(Gaveld.PubSub, Games.display_sending_channel(game.code), :voting)
+        PubSub.broadcast(Gaveld.PubSub, Games.display_sending_channel(game.code), {:voting, game.prev_game})
         {:noreply, assign(socket, game: game, view: "voting", vote_count: 0)}
       {:error, _} ->
         kill_game(socket.assigns.game.code)
