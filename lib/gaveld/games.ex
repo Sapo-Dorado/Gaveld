@@ -30,7 +30,7 @@ defmodule Gaveld.Games do
       {:ok, game} -> game
       {:error, changeset} ->
         case changeset.errors do
-          [code: _] ->
+          [code: {"has already been taken", [constraint: :unique, constraint_name: "games_code_index"]}] ->
             create_game()
           _ -> changeset
         end
@@ -46,6 +46,20 @@ defmodule Gaveld.Games do
   def start_game(%Game{} = game, name) do
     game
     |> Game.changeset(%{controller: name})
+    |> Repo.update()
+  end
+
+  def clear_inputs(game) do
+    game_id = game.id
+    query =
+      from p in Player,
+      where: p.game_id == ^game_id
+    Repo.update_all(query, set: [input: nil])
+  end
+
+  def add_input(player, input) do
+    player
+    |> Player.changeset(%{input: input})
     |> Repo.update()
   end
 
@@ -70,20 +84,6 @@ defmodule Gaveld.Games do
       where: p.uid == ^uid and p.uuid == ^uuid
 
     Repo.one(query)
-  end
-
-  def clear_inputs(game) do
-    game_id = game.id
-    query =
-      from p in Player,
-      where: p.game_id == ^game_id
-    Repo.update_all(query, set: [input: nil])
-  end
-
-  def add_input(player, input) do
-    player
-    |> Player.changeset(%{input: input})
-    |> Repo.update()
   end
 
   def compute_uid(%Game{} = game, name) do

@@ -1,127 +1,181 @@
 defmodule Gaveld.GamesTest do
   use Gaveld.DataCase
 
+  import Ecto.Query, warn: false
+  alias Gaveld.Repo
   alias Gaveld.Games
+  import Mock
 
   describe "games" do
-    alias Gaveld.Games.Game
-
-    @valid_attrs %{code: "some code"}
-    @update_attrs %{code: "some updated code"}
-    @invalid_attrs %{code: nil}
-
-    def game_fixture(attrs \\ %{}) do
-      {:ok, game} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Games.create_game()
-
-      game
-    end
-
-    test "list_games/0 returns all games" do
-      game = game_fixture()
-      assert Games.list_games() == [game]
-    end
-
-    test "get_game!/1 returns the game with given id" do
-      game = game_fixture()
-      assert Games.get_game!(game.id) == game
-    end
-
-    test "create_game/1 with valid data creates a game" do
-      assert {:ok, %Game{} = game} = Games.create_game(@valid_attrs)
-      assert game.code == "some code"
-    end
-
-    test "create_game/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Games.create_game(@invalid_attrs)
-    end
-
-    test "update_game/2 with valid data updates the game" do
-      game = game_fixture()
-      assert {:ok, %Game{} = game} = Games.update_game(game, @update_attrs)
-      assert game.code == "some updated code"
-    end
-
-    test "update_game/2 with invalid data returns error changeset" do
-      game = game_fixture()
-      assert {:error, %Ecto.Changeset{}} = Games.update_game(game, @invalid_attrs)
-      assert game == Games.get_game!(game.id)
-    end
-
-    test "delete_game/1 deletes the game" do
-      game = game_fixture()
-      assert {:ok, %Game{}} = Games.delete_game(game)
-      assert_raise Ecto.NoResultsError, fn -> Games.get_game!(game.id) end
-    end
-
-    test "change_game/1 returns a game changeset" do
-      game = game_fixture()
-      assert %Ecto.Changeset{} = Games.change_game(game)
-    end
-  end
-
-  describe "players" do
     alias Gaveld.Games.Player
 
-    @valid_attrs %{name: "some name", points: 42, uid: "some uid"}
-    @update_attrs %{name: "some updated name", points: 43, uid: "some updated uid"}
-    @invalid_attrs %{name: nil, points: nil, uid: nil}
+    @code_a "fancy llama"
+    @code_b "lame llama"
+    @name_a "Jorfe"
+    @name_b "Billy"
+    @input "game 1"
 
-    def player_fixture(attrs \\ %{}) do
-      {:ok, player} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Games.create_player()
-
-      player
+    def game_fixture(code) do
+      with_mock Gaveld.Codes, [gen_code: fn -> code end] do
+        Games.create_game()
+      end
     end
 
-    test "list_players/0 returns all players" do
-      player = player_fixture()
-      assert Games.list_players() == [player]
+    def player_fixture(game, name) do
+      {:ok, %Player{uuid: uuid}} = Games.add_player(game, name)
+      Games.verify_player(game, name, uuid)
     end
 
-    test "get_player!/1 returns the player with given id" do
-      player = player_fixture()
-      assert Games.get_player!(player.id) == player
+
+    test "get_game/1 returns the game with given id or nil if game doesn't exist" do
+      game = game_fixture(@code_a)
+      assert Games.get_game(@code_a) == game
+      assert is_nil(Games.get_game(@code_b))
     end
 
-    test "create_player/1 with valid data creates a player" do
-      assert {:ok, %Player{} = player} = Games.create_player(@valid_attrs)
-      assert player.name == "some name"
-      assert player.points == 42
-      assert player.uid == "some uid"
+
+    test "validate_game/1 with valid data returns the game otherwise nil" do
+      game = game_fixture(@code_a)
+      assert Games.validate_game(@code_a, game.uuid) == game
+      assert is_nil(Games.validate_game(@code_a, "invalid uuid"))
+      assert is_nil(Games.validate_game(@code_b, game.uuid))
     end
 
-    test "create_player/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Games.create_player(@invalid_attrs)
+    test "reload_players/1 reloads players from game" do
+      game = game_fixture(@code_a)
+      game = Games.reload_players(game)
+      assert game.players == []
+      player = player_fixture(game, @name_a)
+      game = Games.reload_players(game)
+      assert game.players == [player]
+      assert hd(game.players).input == nil
+      Games.add_input(player, @input)
+      game = Games.reload_players(game)
+      assert hd(game.players).input == @input
     end
 
-    test "update_player/2 with valid data updates the player" do
-      player = player_fixture()
-      assert {:ok, %Player{} = player} = Games.update_player(player, @update_attrs)
-      assert player.name == "some updated name"
-      assert player.points == 43
-      assert player.uid == "some updated uid"
+    def mock_gen() do
+    end
+    test "create_game/1 creates a game with a unique code" do
+      with_mock Gaveld.Codes, [gen_code: fn -> Enum.random(["a","a","a","a","a","a","a","a","a","a","a","a","b","c"]) end] do
+        game1 = Games.create_game()
+        game2 = Games.create_game()
+        game3 = Games.create_game()
+        assert game1.code != game2.code
+        assert game2.code != game3.code
+        assert game1.code != game3.code
+
+        #Returns the changeset if there are errors other than the code uniqueness
+        with_mock Gaveld.Repo, [insert: fn _ -> {:error, %{errors: [code: "other messae"]}} end] do
+          game = Games.create_game()
+          assert game == %{errors: [code: "other messae"]}
+        end
+      end
+
     end
 
-    test "update_player/2 with invalid data returns error changeset" do
-      player = player_fixture()
-      assert {:error, %Ecto.Changeset{}} = Games.update_player(player, @invalid_attrs)
-      assert player == Games.get_player!(player.id)
+    test "add_player/2 adds players to a game" do
+      game = game_fixture(@code_a)
+      {:ok, %Player{uuid: uuid1}} = Games.add_player(game, @name_a)
+      {:ok, %Player{uuid: uuid2}} = Games.add_player(game, @name_b)
+      player1 = Games.verify_player(game, @name_a, uuid1)
+      player2 = Games.verify_player(game, @name_b, uuid2)
+      game = Games.reload_players(game)
+      assert Enum.member?(game.players, player1)
+      assert Enum.member?(game.players, player2)
     end
 
-    test "delete_player/1 deletes the player" do
-      player = player_fixture()
-      assert {:ok, %Player{}} = Games.delete_player(player)
-      assert_raise Ecto.NoResultsError, fn -> Games.get_player!(player.id) end
+    test "start_game/2 updates the game's controller value" do
+      game = game_fixture(@code_a)
+      assert game.controller == nil
+      {:ok, game} = Games.start_game(game, @code_a)
+      assert game.controller == @code_a
     end
 
-    test "change_player/1 returns a player changeset" do
-      player = player_fixture()
-      assert %Ecto.Changeset{} = Games.change_player(player)
+    test "voting_results/2, clear_inputs/1, and add_input/2 work correctly" do
+      game = game_fixture(@code_a)
+      player1 = player_fixture(game, @name_a)
+      player2 = player_fixture(game, @name_b)
+      player3 = player_fixture(game, "Hubert")
+      game = Games.reload_players(game)
+      assert Games.voting_results(game) == %{nil: 3}
+      Games.add_input(player1, "Game 1")
+      Games.add_input(player2, "Game 1")
+      Games.add_input(player3, "Game 1")
+      Games.add_input(player2, "Game 2")
+      game = Games.reload_players(game)
+      assert Games.voting_results(game) == %{"Game 1" => 2, "Game 2" => 1}
+      Games.clear_inputs(game)
+      game = Games.reload_players(game)
+      assert Games.voting_results(game) == %{nil: 3}
+    end
+
+    test "update_status/2 updates the status of a game" do
+      game = game_fixture(@code_a)
+      assert game.status == "initialized"
+      {:ok, game} = Games.update_status(game, "new status")
+      assert game.status == "new status"
+    end
+
+    test "verify_player/3 returns the player with valid input otherwise nil" do
+      game = game_fixture(@code_a)
+      player = player_fixture(game, @name_a)
+      assert Games.verify_player(game, @name_a, player.uuid) == player
+      assert Games.verify_player(game, @name_b, player.uuid) == nil
+      assert Games.verify_player(game, @name_a, "invalid uuid") == nil
+    end
+
+    test "compute_uid gives uids that are unique to the game + name combo" do
+      game1 = game_fixture(@code_a)
+      game2 = game_fixture(@code_b)
+      assert Games.compute_uid(game1, @name_a) == Games.compute_uid(game1, @name_a)
+      assert Games.compute_uid(game1, @name_a) != Games.compute_uid(game1, @name_b)
+      assert Games.compute_uid(game1, @name_a) != Games.compute_uid(game2, @name_a)
+    end
+
+    test "delete_player/2 deletes the player from the game" do
+      game = game_fixture(@code_a)
+      player1 = player_fixture(game, @name_a)
+      player2 = player_fixture(game, @name_b)
+      game = Games.reload_players(game)
+      assert length(game.players) == 2
+      assert Enum.member?(game.players, player1)
+      assert Enum.member?(game.players, player2)
+      Games.delete_player(game, @name_a)
+      game = Games.reload_players(game)
+      assert length(game.players) == 1
+      assert not Enum.member?(game.players, player1)
+      assert Enum.member?(game.players, player2)
+    end
+
+    test "delete_game/1 deletes the game and all players in the game" do
+      game = game_fixture(@code_a)
+      player_fixture(game, @name_a)
+      player_fixture(game, @name_b)
+      query =
+        from p in Player,
+        where: p.game_id == ^game.id
+
+      assert Games.get_game(game.code) == game
+      assert length(Repo.all(query)) == 2
+      Games.delete_game(game.code)
+      assert Games.get_game(game.code) == nil
+      assert length(Repo.all(query)) == 0
+    end
+
+    test "PubSub channel functions behave properly" do
+      code_a = "code a"
+      code_b = "code b"
+      assert Games.display_receiving_channel(code_a) != Games.display_receiving_channel(code_b)
+      assert Games.display_sending_channel(code_a) != Games.display_sending_channel(code_b)
+      assert Games.display_receiving_channel(code_a) != Games.display_sending_channel(code_a)
+      assert Games.player_receiving_channel(code_a, "name1") != Games.player_receiving_channel(code_a, "name2")
+      assert Games.player_receiving_channel(code_a, "name1") != Games.player_receiving_channel(code_b, "name1")
+      assert Games.display_receiving_channel(code_a) != Games.player_receiving_channel(code_a, "name1")
+      assert Games.display_sending_channel(code_a) != Games.player_receiving_channel(code_a, "name1")
     end
   end
+
+
+
 end

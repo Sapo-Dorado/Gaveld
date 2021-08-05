@@ -2,6 +2,7 @@
     "skip_files": [
         "test",
         "lib/gaveld_web.ex",
-        "lib/gaveld/application.ex"
+        "lib/gaveld/application.ex",
+        "lib/gaveld_web/channels/user_socket.ex"
     ]
 }
