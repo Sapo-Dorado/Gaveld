@@ -7,7 +7,6 @@ defmodule Gaveld.Codes do
 
 
   def create_word(attrs) do
-    IO.puts(attrs.word)
     %Word{}
     |> Word.changeset(attrs)
     |> Repo.insert()
