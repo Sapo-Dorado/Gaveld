@@ -3,6 +3,8 @@
         "test",
         "lib/gaveld_web.ex",
         "lib/gaveld/application.ex",
-        "lib/gaveld_web/channels/user_socket.ex"
+        "lib/gaveld_web/channels/user_socket.ex",
+        "lib/gaveld_web/views/error_helpers.ex",
+        "lib/gaveld_web/telemetry.ex"
     ]
 }

@@ -27,9 +27,9 @@ defmodule GaveldWeb.HomepageLive do
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
-            <a class="button is-dark" phx-click="create_game">
+            <button class="button is-dark" phx-click="create_game">
               <strong>Create Game</strong>
-            </a>
+            </button>
           </div>
         </div>
       </div>
