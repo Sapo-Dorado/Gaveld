@@ -4,6 +4,7 @@ defmodule GaveldWeb.ControllerLive do
 
   alias Phoenix.PubSub
   alias Gaveld.Games
+  alias Gaveld.Games.Player
 
   @games_list ["Game 1", "Game 2", "Game 3"]
 
@@ -12,13 +13,20 @@ defmodule GaveldWeb.ControllerLive do
     case Games.get_game(code) do
       nil -> {:ok, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
       game ->
+        controller = game.controller
         case Games.verify_player(game, name, uuid) do
-          nil -> {:ok, push_redirect(socket, to: Routes.game_path(socket, :index, code: code))}
-          player ->
+          nil -> {:ok, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
+          %Player{name: ^controller} = player ->
             if connected?(socket), do: PubSub.subscribe(Gaveld.PubSub, Games.display_sending_channel(code))
             {:ok, assign(socket, game: game, player: player, view: game.status)}
+          _ -> {:ok, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
         end
     end
+  end
+
+  @impl true
+  def mount(_assigns, _session, socket) do
+    {:ok, push_redirect(socket, to: Routes.homepage_path(socket, :index))}
   end
 
   @impl true
