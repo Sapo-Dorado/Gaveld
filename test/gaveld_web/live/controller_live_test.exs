@@ -11,8 +11,7 @@ defmodule GaveldWeb.ControllerLiveTest do
   @games_list ["Game 1", "Game 2", "Game 3"]
   @game_code "fancy llama"
   @controller "Jorfe"
-  @player1 "Jorfe1"
-  @player2 "Jorfe2"
+  @player "Jorfe1"
 
   def create_player(game, name) do
     {:ok, %Player{uuid: uuid}} = Games.add_player(game, name)
@@ -23,8 +22,7 @@ defmodule GaveldWeb.ControllerLiveTest do
     with_mock Gaveld.Codes, [gen_code: fn -> @game_code end] do
       {:ok, game} = Games.create_game() |> Games.start_game(@controller)
       controller = create_player(game, @controller)
-      player1 = create_player(game, @player1)
-      create_player(game, @player2)
+      player1 = create_player(game, @player)
       {:ok, game: game, controller: controller, player1: player1}
     end
   end

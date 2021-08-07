@@ -74,12 +74,19 @@ defmodule Gaveld.GamesTest do
 
     end
 
-    test "add_player/2 adds players to a game" do
+    test "add_player/2 adds players to a game if the names are valid" do
       game = game_fixture(@code_a)
       {:ok, %Player{uuid: uuid1}} = Games.add_player(game, @name_a)
       {:ok, %Player{uuid: uuid2}} = Games.add_player(game, @name_b)
       player1 = Games.verify_player(game, @name_a, uuid1)
       player2 = Games.verify_player(game, @name_b, uuid2)
+
+
+      assert {:error, _} = Games.add_player(game, "")
+      assert {:error, _} = Games.add_player(game, "aq")
+      assert {:error, _} = Games.add_player(game, "aaaaaaaaaaaaaaaaaaaaa")
+      assert {:error, _} = Games.add_player(game, @name_a)
+
       game = Games.reload_players(game)
       assert Enum.member?(game.players, player1)
       assert Enum.member?(game.players, player2)
