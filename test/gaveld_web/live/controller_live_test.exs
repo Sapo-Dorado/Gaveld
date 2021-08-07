@@ -102,7 +102,7 @@ defmodule GaveldWeb.ControllerLiveTest do
         assert not (view |> element("button", prev_game) |> has_element?())
 
         #stopped from status
-        {:ok, game} = Games.update_status(game, "voting_results")
+        Games.update_status(game, "voting_results")
         for game_name <- List.delete(@games_list, prev_game) do
           assert view |> element("button", game_name) |> has_element?()
         end

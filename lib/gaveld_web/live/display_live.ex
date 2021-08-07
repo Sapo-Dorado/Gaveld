@@ -14,6 +14,7 @@ defmodule GaveldWeb.DisplayLive do
         if connected?(socket), do: PubSub.subscribe(Gaveld.PubSub, Games.display_receiving_channel(code))
         game = Games.reload_players(game)
         vote_count = Enum.reduce(game.players, 0, fn p, acc -> if is_nil(p.input), do: acc, else: acc + 1 end)
+        game = if game.status == "voting" and vote_count == length(game.players) - 1, do: %{game | status: "voting_results"}, else: game
         {:ok, assign(socket, players: Enum.map(game.players, fn p -> p.name end), game: game, controller: nil, view: game.status, vote_count: vote_count)}
     end
   end
@@ -159,7 +160,7 @@ defmodule GaveldWeb.DisplayLive do
               <%= crown_svg(assigns) %>
             </div>
           <%else%>
-            <div class="promote unselected" phx-click="select_controller" phx-value-name="<%= player %>">
+            <div class="promote unselected" id="<%=player %>" phx-click="select_controller" phx-value-name="<%= player %>">
               <%= crown_svg(assigns) %>
             </div>
           <%end%>

@@ -61,7 +61,7 @@ defmodule GaveldWeb.GameLiveTest do
     end
 
     test "entering valid name joins game and invalid name prints an error", %{conn: conn, game: %Game{code: code}} do
-      with_mock(Phoenix.PubSub, [broadcast: fn (_,_,_) -> :ok end, subscribe: fn(_,_) -> :ok end]) do
+      with_mock(Phoenix.PubSub, [:passthrough], [broadcast: fn (_,_,_) -> :ok end]) do
         {:ok, view, _html} = live(conn, Routes.game_path(conn, :index, code: code))
         {:error, {:live_redirect, %{to: destination}}} = render_submit(view, "enter_name", %{name: "New Player"})
         assert destination =~ Routes.game_path(conn, :index, code: code, name: "New Player")
