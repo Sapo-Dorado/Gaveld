@@ -79,7 +79,7 @@ defmodule GaveldWeb.GameLiveTest do
     end
 
     test "submitting votes updates the player's vote", %{conn: conn, game: game, player1: player} do
-      Games.update_status(game, "voting")
+      {:ok, game} = Games.update_status(game, "voting")
       {:ok, view, _html} = live(conn, Routes.game_path(conn, :index, code: game.code, name: player.name, uuid: player.uuid))
       with_mock(Phoenix.PubSub, [:passthrough], [broadcast: fn (_,_,_) -> :ok end]) do
         input = @game1
@@ -124,7 +124,7 @@ defmodule GaveldWeb.GameLiveTest do
     test "voting displays behave properly", %{conn: conn, game: game, player1: player} do
       for prev_game <- ["initialized" | @games_list] do
         #setting prev_game from signal
-        Games.update_status(game, prev_game)
+        {:ok, game} = Games.update_status(game, prev_game)
         {:ok, view, _html} = live(conn, Routes.game_path(conn, :index, code: game.code, name: player.name, uuid: player.uuid))
         send(view.pid, {:voting, prev_game})
         for game_name <- List.delete(@games_list, prev_game) do
@@ -134,7 +134,7 @@ defmodule GaveldWeb.GameLiveTest do
 
         #setting prev_game from status
         {:ok, game} = Games.update_status(game, prev_game)
-        Games.update_status(game, "voting")
+        {:ok, game} = Games.update_status(game, "voting")
         {:ok, view, _html} = live(conn, Routes.game_path(conn, :index, code: game.code, name: player.name, uuid: player.uuid))
         for game_name <- List.delete(@games_list, prev_game) do
           assert render(view) =~ game_name
@@ -145,13 +145,13 @@ defmodule GaveldWeb.GameLiveTest do
 
     test "stop vote signal stops the vote", %{conn: conn, game: game, player1: player} do
       #stopping vote from signal
-      Games.update_status(game, "voting")
+      {:ok, game} = Games.update_status(game, "voting")
       {:ok, view, _html} = live(conn, Routes.game_path(conn, :index, code: game.code, name: player.name, uuid: player.uuid))
       send(view.pid, :stop_vote)
       assert render(view) =~ "Voting Results"
 
       #stopping voite from status
-      Games.update_status(game, "voting_results")
+      {:ok, game} = Games.update_status(game, "voting_results")
       {:ok, view, _html} = live(conn, Routes.game_path(conn, :index, code: game.code, name: player.name, uuid: player.uuid))
       assert render(view) =~ "Voting Results"
     end
@@ -160,14 +160,14 @@ defmodule GaveldWeb.GameLiveTest do
       for game_name <- @games_list do
         #switching game from signal
         game = Games.get_game(game.code)
-        Games.update_status(game, "initialized")
+        {:ok, game} = Games.update_status(game, "initialized")
         {:ok, view, _html} = live(conn, Routes.game_path(conn, :index, code: game.code, name: player.name, uuid: player.uuid))
         assert render(view) =~ "Welcome " <> player.name
         send(view.pid, game_name)
         assert render(view) =~ game_name
 
         #switching game from status
-        Games.update_status(game, game_name)
+        {:ok, game} = Games.update_status(game, game_name)
         {:ok, view, _html} = live(conn, Routes.game_path(conn, :index, code: game.code, name: player.name, uuid: player.uuid))
         assert render(view) =~ game_name
        end

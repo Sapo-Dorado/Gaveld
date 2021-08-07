@@ -46,7 +46,7 @@ defmodule GaveldWeb.ControllerLiveTest do
 
     test "clicking stop voting button sends out a stop_vote signal", %{conn: conn, game: game, controller: controller} do
       with_mock(Phoenix.PubSub, [:passthrough], [broadcast: fn (_,_,_) -> :ok end]) do
-        Games.update_status(game, "voting")
+        {:ok, game} = Games.update_status(game, "voting")
         {:ok, view, _html} = live(conn, Routes.controller_path(conn, :index, code: game.code, name: controller.name, uuid: controller.uuid))
         view |> element("button", "Stop Vote") |> render_click()
         assert_called(Phoenix.PubSub.broadcast(Gaveld.PubSub, Games.display_receiving_channel(game.code), :stop_vote))
@@ -56,7 +56,7 @@ defmodule GaveldWeb.ControllerLiveTest do
     test "clicking a game button sends out that game's signal", %{conn: conn, game: game, controller: controller} do
       with_mock(Phoenix.PubSub, [:passthrough], [broadcast: fn (_,_,_) -> :ok end]) do
         for game_name <- @games_list do
-          Games.update_status(game, "voting_results")
+          {:ok, game} = Games.update_status(game, "voting_results")
           {:ok, view, _html} = live(conn, Routes.controller_path(conn, :index, code: game.code, name: controller.name, uuid: controller.uuid))
           view |> element("button", game_name) |> render_click()
           assert_called(Phoenix.PubSub.broadcast(Gaveld.PubSub, Games.display_receiving_channel(game.code), game_name))
@@ -67,7 +67,7 @@ defmodule GaveldWeb.ControllerLiveTest do
     test "clicking stop game button sends out a start_vote signal", %{conn: conn, game: game, controller: controller} do
       with_mock(Phoenix.PubSub, [:passthrough], [broadcast: fn (_,_,_) -> :ok end]) do
         for game_name <- @games_list do
-          Games.update_status(game, game_name)
+          {:ok, game} = Games.update_status(game, game_name)
           {:ok, view, _html} = live(conn, Routes.controller_path(conn, :index, code: game.code, name: controller.name, uuid: controller.uuid))
           view |> element("button", "Stop Game") |> render_click()
         end
@@ -82,7 +82,7 @@ defmodule GaveldWeb.ControllerLiveTest do
       assert view |> element("button", "Stop Vote") |> has_element?()
 
       #voting from status
-      Games.update_status(game, "voting")
+      {:ok, game} = Games.update_status(game, "voting")
       {:ok, view, _html} = live(conn, Routes.controller_path(conn, :index, code: game.code, name: controller.name, uuid: controller.uuid))
       assert view |> element("button", "Stop Vote") |> has_element?()
     end
@@ -90,7 +90,7 @@ defmodule GaveldWeb.ControllerLiveTest do
     test "stop vote message stops voting", %{conn: conn, game: game, controller: controller} do
       for prev_game <- ["initialized" | @games_list] do
         {:ok, game} = Games.update_status(game, prev_game)
-        Games.update_status(game, "voting")
+        {:ok, game} = Games.update_status(game, "voting")
 
         #stopping from signal
         {:ok, view, _html} = live(conn, Routes.controller_path(conn, :index, code: game.code, name: controller.name, uuid: controller.uuid))
@@ -102,7 +102,7 @@ defmodule GaveldWeb.ControllerLiveTest do
         assert not (view |> element("button", prev_game) |> has_element?())
 
         #stopped from status
-        Games.update_status(game, "voting_results")
+        {:ok, game} = Games.update_status(game, "voting_results")
         for game_name <- List.delete(@games_list, prev_game) do
           assert view |> element("button", game_name) |> has_element?()
         end
@@ -114,14 +114,14 @@ defmodule GaveldWeb.ControllerLiveTest do
       for game_name <- @games_list do
         #game from signal
         game = Games.get_game(game.code)
-        Games.update_status(game, "initialized")
+        {:ok, game} = Games.update_status(game, "initialized")
         {:ok, view, _html} = live(conn, Routes.controller_path(conn, :index, code: game.code, name: controller.name, uuid: controller.uuid))
         assert render(view) =~ "You are the controller"
         send(view.pid, game_name)
         assert view |> element("button", "Stop Game") |> has_element?()
 
         #game from status
-        Games.update_status(game, game_name)
+        {:ok, game} = Games.update_status(game, game_name)
         {:ok, view, _html} = live(conn, Routes.controller_path(conn, :index, code: game.code, name: controller.name, uuid: controller.uuid))
         assert view |> element("button", "Stop Game") |> has_element?()
       end
