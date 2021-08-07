@@ -128,7 +128,6 @@ alcohol
 alcove
 alder
 ale
-alert
 alfalfa
 algebra
 algorithm
@@ -204,7 +203,6 @@ ankle
 anklet
 anniversary
 announcement
-annual
 anorak
 answer
 ant
@@ -219,7 +217,6 @@ antibody
 anticipation
 anticodon
 antigen
-antique
 antiquity
 antler
 antling
@@ -369,7 +366,6 @@ autumn
 availability
 avalanche
 avenue
-average
 avocado
 award
 awareness
@@ -398,7 +394,6 @@ bag
 bagel
 baggage
 baggie
-baggy
 bagpipe
 bail
 bait
@@ -570,8 +565,6 @@ biscuit
 bit
 bite
 bitten
-bitter
-black
 blackberry
 blackbird
 blackboard
@@ -580,14 +573,12 @@ blackness
 bladder
 blade
 blame
-blank
 blanket
 blast
 blazer
 blend
 blessing
 blight
-blind
 blinker
 blister
 blizzard
@@ -604,7 +595,6 @@ blouse
 blow
 blowgun
 blowhole
-blue
 blueberry
 blush
 boar
@@ -711,11 +701,9 @@ brick
 bricklaying
 bride
 bridge
-brief
 briefing
 briefly
 briefs
-brilliant
 brink
 brisket
 broad
@@ -727,14 +715,12 @@ broiler
 broker
 bronchitis
 bronco
-bronze
 brooch
 brood
 brook
 broom
 brother
 brow
-brown
 brownie
 browser
 browsing
@@ -823,7 +809,6 @@ caliber
 calibre
 calico
 call
-calm
 calorie
 camel
 cameo
@@ -856,7 +841,6 @@ capability
 capacity
 cape
 caper
-capital
 capitalism
 capitulation
 capon
@@ -1036,7 +1020,6 @@ chestnut
 chick
 chicken
 chicory
-chief
 chiffonier
 child
 childbirth
@@ -1112,7 +1095,6 @@ clarinet
 clarity
 clasp
 class
-classic
 classification
 classmate
 classroom
@@ -1148,7 +1130,6 @@ clockwork
 clogs
 cloister
 clone
-close
 closet
 closing
 closure
@@ -1196,7 +1177,6 @@ coin
 coincidence
 coinsurance
 coke
-cold
 coleslaw
 coliseum
 collaboration
@@ -1232,7 +1212,6 @@ comeback
 comedy
 comestible
 comfort
-comfortable
 comic
 comics
 comma
@@ -1246,7 +1225,6 @@ commission
 commitment
 committee
 commodity
-common
 commonsense
 commotion
 communicant
@@ -1259,7 +1237,6 @@ company
 comparison
 compass
 compassion
-compassionate
 compensation
 competence
 competition
@@ -1267,7 +1244,6 @@ competitor
 complaint
 complement
 completion
-complex
 complexity
 compliance
 complication
@@ -1294,7 +1270,6 @@ conception
 concern
 concert
 conclusion
-concrete
 condition
 conditioner
 condominium
@@ -1335,7 +1310,6 @@ console
 consonant
 conspiracy
 conspirator
-constant
 constellation
 constitution
 constraint
@@ -1349,7 +1323,6 @@ contact
 contact lens
 contagion
 container
-content
 contention
 contest
 context
@@ -1472,12 +1445,10 @@ craw
 crawdad
 crayfish
 crayon
-crazy
 cream
 creation
 creationism
 creationist
-creative
 creativity
 creator
 creature
@@ -1502,10 +1473,8 @@ cribbage
 cricket
 cricketer
 crime
-criminal
 crinoline
 crisis
-crisp
 criteria
 criterion
 critic
@@ -1604,7 +1573,6 @@ dancing
 dandelion
 danger
 dare
-dark
 darkness
 darn
 dart
@@ -1618,12 +1586,10 @@ dawn
 day
 daybed
 daylight
-dead
 deadline
 deal
 dealer
 dealing
-dearest
 death
 deathwatch
 debate
@@ -1633,7 +1599,6 @@ debtor
 decade
 decadence
 decency
-decimal
 decision
 deck
 declaration
@@ -1648,7 +1613,6 @@ dedication
 deduce
 deduction
 deed
-deep
 deer
 default
 defeat
@@ -1678,7 +1642,6 @@ deodorant
 department
 departure
 dependency
-dependent
 deployment
 deposit
 deposition
@@ -1874,7 +1837,6 @@ doorway
 dory
 dose
 dot
-double
 doubling
 doubt
 doubter
@@ -1992,7 +1954,6 @@ ecumenist
 eddy
 edge
 edger
-edible
 editing
 edition
 editor
@@ -2107,7 +2068,6 @@ epithelium
 epoch
 eponym
 epoxy
-equal
 equality
 equation
 equinox
@@ -2126,7 +2086,6 @@ espadrille
 espalier
 essay
 essence
-essential
 establishment
 estate
 estimate
@@ -2150,7 +2109,6 @@ everyone
 everything
 eviction
 evidence
-evil
 evocation
 evolution
 exaggeration
@@ -2189,7 +2147,6 @@ expense
 experience
 experiment
 experimentation
-expert
 expertise
 explanation
 exploration
@@ -2235,11 +2192,9 @@ failure
 fairness
 fairy
 faith
-faithful
 fall
 fallacy
 fame
-familiar
 familiarity
 family
 fan
@@ -2254,7 +2209,6 @@ farmland
 farrow
 fascia
 fashion
-fat
 fate
 father
 fatigue
@@ -2264,7 +2218,6 @@ fault
 fav
 fava
 favor
-favorite
 fawn
 fax
 fear
@@ -2282,7 +2235,6 @@ feel
 feeling
 fellow
 felony
-female
 fen
 fence
 fencing
@@ -2295,7 +2247,6 @@ ferryboat
 fertilizer
 festival
 fetus
-few
 fiber
 fiberglass
 fibre
@@ -2325,7 +2276,6 @@ final
 finance
 financing
 finding
-fine
 finer
 finger
 fingerling
@@ -2337,8 +2287,6 @@ fire
 fireman
 fireplace
 firewall
-firm
-first
 fish
 fishbone
 fisherman
@@ -2358,7 +2306,6 @@ flan
 flanker
 flare
 flash
-flat
 flatboat
 flavor
 flax
@@ -2430,7 +2377,6 @@ forever
 forgery
 fork
 form
-formal
 formamide
 format
 formation
@@ -2481,7 +2427,6 @@ fringe
 fritter
 frock
 frog
-front
 frontier
 frost
 frosting
@@ -2493,7 +2438,6 @@ fuck
 fuel
 fugato
 fulfillment
-full
 fun
 function
 functionality
@@ -2558,7 +2502,6 @@ gem
 gemsbok
 gender
 gene
-general
 generation
 generator
 generosity
@@ -2577,7 +2520,6 @@ gesture
 geyser
 gherkin
 ghost
-giant
 gift
 gig
 gigantism
@@ -2594,7 +2536,6 @@ glacier
 gladiolus
 glance
 gland
-glass
 glasses
 glee
 glen
@@ -2628,7 +2569,6 @@ goldfish
 golf
 gondola
 gong
-good
 goodbye
 goodie
 goodness
@@ -2654,7 +2594,6 @@ grain
 gram
 grammar
 gran
-grand
 grandchild
 granddaughter
 grandfather
@@ -2680,11 +2619,9 @@ gravel
 gravitas
 gravity
 gravy
-gray
 grease
 greatness
 greed
-green
 greenhouse
 greens
 grenade
@@ -2717,7 +2654,6 @@ guide
 guideline
 guilder
 guilt
-guilty
 guinea
 guitar
 guitarist
@@ -2741,7 +2677,6 @@ hail
 hair
 haircut
 hake
-half
 halibut
 hall
 halloween
@@ -2825,7 +2760,6 @@ heat
 heater
 heating
 heaven
-heavy
 hectare
 hedge
 hedgehog
@@ -2861,7 +2795,6 @@ heyday
 hiccups
 hide
 hierarchy
-high
 highland
 highlight
 highway
@@ -2996,10 +2929,8 @@ icecream
 icicle
 icing
 icon
-icy
 id
 idea
-ideal
 identification
 identity
 ideology
@@ -3007,9 +2938,7 @@ idiom
 idiot
 igloo
 ignorance
-ignorant
 ikebana
-illegal
 illiteracy
 illness
 illusion
@@ -3072,7 +3001,6 @@ infant
 infarction
 infection
 infiltration
-infinite
 infix
 inflammation
 inflation
@@ -3101,7 +3029,6 @@ inlay
 inn
 innervation
 innocence
-innocent
 innovation
 input
 inquiry
@@ -3138,7 +3065,6 @@ integrity
 intellect
 intelligence
 intensity
-intent
 intention
 intentionality
 interaction
@@ -3180,7 +3106,6 @@ involvement
 iridescence
 iris
 iron
-ironclad
 irony
 irrigation
 ischemia
@@ -3224,7 +3149,6 @@ jockey
 jodhpurs
 joey
 jogging
-joint
 joke
 jot
 journal
@@ -3239,12 +3163,10 @@ jug
 juggernaut
 juice
 julienne
-jumbo
 jump
 jumper
 jumpsuit
 jungle
-junior
 junk
 junker
 junket
@@ -3267,7 +3189,6 @@ ketch
 ketchup
 kettle
 kettledrum
-key
 keyboard
 keyboarding
 keystone
@@ -3283,7 +3204,6 @@ kilometer
 kilt
 kimono
 kinase
-kind
 kindness
 king
 kingdom
@@ -3352,7 +3272,6 @@ larva
 laryngitis
 lasagna
 lashes
-last
 latency
 latex
 lathe
@@ -3374,7 +3293,6 @@ layout
 lead
 leader
 leadership
-leading
 leaf
 league
 leaker
@@ -3387,10 +3305,8 @@ leaver
 lecture
 leek
 leeway
-left
 leg
 legacy
-legal
 legend
 legging
 legislation
@@ -3436,7 +3352,6 @@ lifestyle
 lifetime
 lift
 ligand
-light
 lighting
 lightning
 lightscreen
@@ -3465,7 +3380,6 @@ lip
 lipid
 lipoprotein
 lipstick
-liquid
 liquidity
 liquor
 list
@@ -3581,13 +3495,11 @@ mainstream
 maintainer
 maintenance
 maize
-major
 majority
 makeover
 maker
 makeup
 making
-male
 malice
 mall
 mallard
@@ -3595,7 +3507,6 @@ mallet
 malnutrition
 mama
 mambo
-mammoth
 man
 manacle
 management
@@ -3682,7 +3593,6 @@ mayonnaise
 mayor
 meadow
 meal
-mean
 meander
 meaning
 means
@@ -3702,7 +3612,6 @@ media
 median
 medication
 medicine
-medium
 meet
 meeting
 melatonin
@@ -3731,7 +3640,6 @@ mesenchyme
 mess
 message
 messenger
-messy
 metabolite
 metal
 metallurgist
@@ -3790,7 +3698,6 @@ minion
 minister
 mink
 minnow
-minor
 minority
 mint
 minute
@@ -4008,7 +3915,6 @@ noodle
 noodles
 noon
 norm
-normal
 normalisation
 normalization
 north
@@ -4024,7 +3930,6 @@ notoriety
 nougat
 noun
 nourishment
-novel
 nucleotidase
 nucleotide
 nudge
@@ -4082,7 +3987,6 @@ offer
 offering
 office
 officer
-official
 offset
 oil
 okra
@@ -4111,19 +4015,16 @@ opportunist
 opportunity
 opposite
 opposition
-optimal
 optimisation
 optimist
 optimization
 option
-orange
 orangutan
 orator
 orchard
 orchestra
 orchid
 order
-ordinary
 ordination
 ore
 oregano
@@ -4135,13 +4036,11 @@ organizing
 orient
 orientation
 origin
-original
 originality
 ornament
 osmosis
 osprey
 ostrich
-other
 otter
 ottoman
 ounce
@@ -4161,7 +4060,6 @@ outrigger
 outrun
 outset
 outside
-oval
 ovary
 oven
 overcharge
@@ -4276,7 +4174,6 @@ passion
 passive
 passport
 password
-past
 pasta
 paste
 pastor
@@ -4370,7 +4267,6 @@ perp
 perpendicular
 persimmon
 person
-personal
 personality
 personnel
 perspective
@@ -4401,7 +4297,6 @@ photography
 photoreceptor
 phrase
 phrasing
-physical
 physics
 physiology
 pianist
@@ -4443,7 +4338,6 @@ pine
 pineapple
 pinecone
 ping
-pink
 pinkie
 pinot
 pinstripe
@@ -4469,7 +4363,6 @@ placebo
 placement
 placode
 plagiarism
-plain
 plaintiff
 plan
 plane
@@ -4481,7 +4374,6 @@ planter
 planula
 plaster
 plasterboard
-plastic
 plate
 platelet
 platform
@@ -4550,7 +4442,6 @@ poncho
 pond
 pony
 pool
-poor
 pop
 popcorn
 poppy
@@ -4572,7 +4463,6 @@ portrait
 position
 possession
 possibility
-possible
 post
 postage
 postbox
@@ -4616,7 +4506,6 @@ preoccupation
 preparation
 prescription
 presence
-present
 presentation
 preservation
 preserves
@@ -4638,7 +4527,6 @@ pricing
 pride
 priest
 priesthood
-primary
 primate
 prince
 princess
@@ -4652,9 +4540,7 @@ priority
 prison
 prisoner
 privacy
-private
 privilege
-prize
 prizefight
 probability
 probation
@@ -4760,7 +4646,6 @@ puppy
 purchase
 puritan
 purity
-purple
 purpose
 purr
 purse
@@ -4788,7 +4673,6 @@ questioner
 questionnaire
 quiche
 quicksand
-quiet
 quill
 quilt
 quince
@@ -4866,7 +4750,6 @@ read
 reader
 readiness
 reading
-real
 reality
 realization
 realm
@@ -4901,7 +4784,6 @@ recovery
 recreation
 recruit
 rectangle
-red
 redesign
 redhead
 redirect
@@ -4949,7 +4831,6 @@ remains
 remark
 reminder
 remnant
-remote
 removal
 renaissance
 rent
@@ -5048,7 +4929,6 @@ rider
 ridge
 riding
 rifle
-right
 rim
 ring
 ringworm
@@ -5091,7 +4971,6 @@ rosemary
 roster
 rostrum
 rotation
-round
 roundabout
 route
 router
@@ -5129,7 +5008,6 @@ sack
 saddle
 sadness
 safari
-safe
 safeguard
 safety
 saffron
@@ -5252,9 +5130,7 @@ seaside
 season
 seat
 seaweed
-second
 secrecy
-secret
 secretariat
 secretary
 secretion
@@ -5373,7 +5249,6 @@ shopper
 shopping
 shore
 shoreline
-short
 shortage
 shorts
 shortwave
@@ -5388,7 +5263,6 @@ shrimp
 shrine
 shutdown
 sibling
-sick
 sickness
 side
 sideboard
@@ -5414,11 +5288,8 @@ silicon
 silk
 silkworm
 sill
-silly
 silo
-silver
 similarity
-simple
 simplicity
 simplification
 simvastatin
@@ -5655,7 +5526,6 @@ spume
 spur
 spy
 spyglass
-square
 squash
 squatter
 squeegee
@@ -5663,7 +5533,6 @@ squid
 squirrel
 stab
 stability
-stable
 stack
 stacking
 stadium
@@ -5682,7 +5551,6 @@ stamina
 stamp
 stance
 stand
-standard
 standardisation
 standardization
 standing
@@ -5706,7 +5574,6 @@ steak
 stealth
 steam
 steamroller
-steel
 steeple
 stem
 stench
@@ -5935,7 +5802,6 @@ talking
 tamale
 tambour
 tambourine
-tan
 tandem
 tangerine
 tank
@@ -5947,7 +5813,6 @@ tapioca
 target
 taro
 tarragon
-tart
 task
 tassel
 taste
@@ -5992,7 +5857,6 @@ temptation
 temptress
 tenant
 tendency
-tender
 tenement
 tenet
 tennis
@@ -6142,7 +6006,6 @@ tortellini
 tortilla
 tortoise
 tosser
-total
 tote
 touch
 tour
@@ -6221,7 +6084,6 @@ trick
 trigger
 trigonometry
 trillion
-trim
 trinket
 trip
 tripod
@@ -6309,10 +6171,8 @@ underwire
 underwriting
 unemployment
 unibody
-uniform
 uniformity
 union
-unique
 unit
 unity
 universe
@@ -6344,7 +6204,6 @@ valentine
 validate
 validity
 valley
-valuable
 value
 vampire
 van
@@ -6353,7 +6212,6 @@ vane
 vanilla
 vanity
 variability
-variable
 variant
 variation
 variety
@@ -6424,7 +6282,6 @@ vinyl
 viola
 violation
 violence
-violet
 violin
 virginal
 virtue
@@ -6543,8 +6400,6 @@ week
 weekend
 weekender
 weight
-weird
-welcome
 welfare
 well
 west
@@ -6560,13 +6415,10 @@ whelp
 whey
 whip
 whirlpool
-whirlwind
 whisker
 whiskey
 whisper
 whistle
-white
-whole
 wholesale
 wholesaler
 whorl
@@ -6576,7 +6428,6 @@ widow
 width
 wife
 wifi
-wild
 wildebeest
 wilderness
 wildlife
@@ -6653,7 +6504,6 @@ wrinkle
 wrist
 writer
 writing
-wrong
 xylophone
 yacht
 yahoo
@@ -6666,7 +6516,6 @@ yarn
 yawl
 year
 yeast
-yellow
 yellowjacket
 yesterday
 yew
@@ -6675,7 +6524,6 @@ yoga
 yogurt
 yoke
 yolk
-young
 youngster
 yourself
 youth
