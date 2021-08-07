@@ -45,7 +45,7 @@ defmodule GaveldWeb.ControllerLiveTest do
     end
 
     test "clicking stop voting button sends out a stop_vote signal", %{conn: conn, game: game, controller: controller} do
-      with_mock(Phoenix.PubSub, [broadcast: fn (_,_,_) -> :ok end, subscribe: fn(_,_) -> :ok end]) do
+      with_mock(Phoenix.PubSub, [:passthrough], [broadcast: fn (_,_,_) -> :ok end]) do
         Games.update_status(game, "voting")
         {:ok, view, _html} = live(conn, Routes.controller_path(conn, :index, code: game.code, name: controller.name, uuid: controller.uuid))
         view |> element("button", "Stop Vote") |> render_click()
@@ -54,7 +54,7 @@ defmodule GaveldWeb.ControllerLiveTest do
     end
 
     test "clicking a game button sends out that game's signal", %{conn: conn, game: game, controller: controller} do
-      with_mock(Phoenix.PubSub, [broadcast: fn (_,_,_) -> :ok end, subscribe: fn(_,_) -> :ok end]) do
+      with_mock(Phoenix.PubSub, [:passthrough], [broadcast: fn (_,_,_) -> :ok end]) do
         for game_name <- @games_list do
           Games.update_status(game, "voting_results")
           {:ok, view, _html} = live(conn, Routes.controller_path(conn, :index, code: game.code, name: controller.name, uuid: controller.uuid))
@@ -65,7 +65,7 @@ defmodule GaveldWeb.ControllerLiveTest do
     end
 
     test "clicking stop game button sends out a start_vote signal", %{conn: conn, game: game, controller: controller} do
-      with_mock(Phoenix.PubSub, [broadcast: fn (_,_,_) -> :ok end, subscribe: fn(_,_) -> :ok end]) do
+      with_mock(Phoenix.PubSub, [:passthrough], [broadcast: fn (_,_,_) -> :ok end]) do
         for game_name <- @games_list do
           Games.update_status(game, game_name)
           {:ok, view, _html} = live(conn, Routes.controller_path(conn, :index, code: game.code, name: controller.name, uuid: controller.uuid))
@@ -75,29 +75,54 @@ defmodule GaveldWeb.ControllerLiveTest do
     end
 
     test "sending voting message starts vote properly", %{conn: conn, game: game, controller: controller} do
+      #voting from signal
       {:ok, view, _html} = live(conn, Routes.controller_path(conn, :index, code: game.code, name: controller.name, uuid: controller.uuid))
       assert render(view) =~ "You are the controller"
       send(view.pid, {:voting, nil})
       assert view |> element("button", "Stop Vote") |> has_element?()
+
+      #voting from status
+      Games.update_status(game, "voting")
+      {:ok, view, _html} = live(conn, Routes.controller_path(conn, :index, code: game.code, name: controller.name, uuid: controller.uuid))
+      assert view |> element("button", "Stop Vote") |> has_element?()
     end
 
     test "stop vote message stops voting", %{conn: conn, game: game, controller: controller} do
-      for prev_game <- [nil | @games_list] do
+      for prev_game <- ["initialized" | @games_list] do
+        {:ok, game} = Games.update_status(game, prev_game)
         Games.update_status(game, "voting")
+
+        #stopping from signal
         {:ok, view, _html} = live(conn, Routes.controller_path(conn, :index, code: game.code, name: controller.name, uuid: controller.uuid))
         assert view |> element("button", "Stop Vote") |> has_element?()
         send(view.pid, :stop_vote)
         for game_name <- List.delete(@games_list, prev_game) do
           assert view |> element("button", game_name) |> has_element?()
         end
+        assert not (view |> element("button", prev_game) |> has_element?())
+
+        #stopped from status
+        Games.update_status(game, "voting_results")
+        for game_name <- List.delete(@games_list, prev_game) do
+          assert view |> element("button", game_name) |> has_element?()
+        end
+        assert not (view |> element("button", prev_game) |> has_element?())
       end
     end
 
     test "game message starts game", %{conn: conn, game: game, controller: controller} do
       for game_name <- @games_list do
+        #game from signal
+        game = Games.get_game(game.code)
+        Games.update_status(game, "initialized")
         {:ok, view, _html} = live(conn, Routes.controller_path(conn, :index, code: game.code, name: controller.name, uuid: controller.uuid))
         assert render(view) =~ "You are the controller"
         send(view.pid, game_name)
+        assert view |> element("button", "Stop Game") |> has_element?()
+
+        #game from status
+        Games.update_status(game, game_name)
+        {:ok, view, _html} = live(conn, Routes.controller_path(conn, :index, code: game.code, name: controller.name, uuid: controller.uuid))
         assert view |> element("button", "Stop Game") |> has_element?()
       end
     end

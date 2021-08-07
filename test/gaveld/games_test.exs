@@ -122,6 +122,7 @@ defmodule Gaveld.GamesTest do
       assert game.status == "initialized"
       {:ok, game} = Games.update_status(game, "new status")
       assert game.status == "new status"
+      assert Games.get_game(@code_a).status == "new status"
     end
 
     test "verify_player/3 returns the player with valid input otherwise nil" do
